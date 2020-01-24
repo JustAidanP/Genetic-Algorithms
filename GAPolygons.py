@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageChops
 import numpy
+import sys
 
 from copy import deepcopy
 from GenePolygon import GenePolygon
@@ -64,12 +65,19 @@ class GAPolygons(GeneticAlgorithm):
 
 
 if __name__=="__main__":
+    inputFile = ""
+    outputFile = ""
+    try:
+        if sys.argv[1] == "-i": inputFile = sys.argv[2]
+        if sys.argv[3] == "-o": outputFile = sys.argv[4]
+    except: sys.exit(0)
+
     ga = GAPolygons(30, 512, 0.05, 0)
 
     ga.setCanvasSize(Vector(100, 100))
     ga.setFitnessThreshold(100 * 100 * 4 * 75)
 
-    targetImage = Image.open("/Users/aidanprice/Desktop/Machine Learning/GeneticAlgorithms/IrelandCoralBeach.jpeg")
+    targetImage = Image.open(inputFile)
     #Converts the image to RGBA
     targetImage = targetImage.convert("RGBA")
     targetImage = targetImage.resize((100, 100))
@@ -77,4 +85,4 @@ if __name__=="__main__":
     ga.setTargetImage(targetImage)
 
     ga.generatePopulation()
-    ga.run("/Users/aidanprice/Desktop/Coding/GeneticAlgorithms/bm.json", 10)
+    ga.run(outputFile, 10)
