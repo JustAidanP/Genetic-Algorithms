@@ -1,4 +1,5 @@
 from random import randint
+import time, math
 from Population import Population, Member
 class GeneticAlgorithm:
     #------Initialiser-------
@@ -68,16 +69,27 @@ class GeneticAlgorithm:
     #Arguments: -The output path            -String
     #           -Generations until output   -Int
     def run(self, bmOutputPath, gensUntilOutput):
+        startTime = time.time()
         #Constantly runs the GA
         while True:
             print("------Generation %s------"%self.generationNumber)
             self.runOnce()
             #Checks to see if the best member should be output
             if self.generationNumber % gensUntilOutput == 0:
-                file = open(bmOutputPath, 'w')
-                file.write(self.bestMeber.dump())
-                file.close()
                 print("Best Member Saved")
+                file = open(bmOutputPath + ".json", 'w')
+                #Creates the json file output
+                jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(self.bestMeber.dump(), time.time() - startTime, self.generationNumber)
+                file.write(jsonOut)
+                file.close()
+
+            #Writes a history of the best member when the generation is a power of two
+            if math.log2(self.generationNumber).is_integer():
+                file = open(bmOutputPath + "_Gen%s"%self.generationNumber + ".json", "w")
+                #Creates the json output file
+                jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(self.bestMeber.dump(), time.time() - startTime, self.generationNumber)
+                file.write(jsonOut)
+                file.close()
     
     #Stops the running of the GA
     def stop(self): pass

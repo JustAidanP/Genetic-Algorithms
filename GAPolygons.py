@@ -40,13 +40,14 @@ class GAPolygons(GeneticAlgorithm):
     #Arguments: -The member -Member
     def createImage(self, _member):
         #Creates the image
-        memberImage = Image.new("RGBA", (self.canvasSize.x, self.canvasSize.y))
+        memberImage = Image.new("RGB", (self.canvasSize.x, self.canvasSize.y), (0, 0, 0))
         #Creates a canvas for the image
-        drawingCanvas = ImageDraw.Draw(im=memberImage)
+        drawingCanvas = ImageDraw.Draw(memberImage, "RGBA")
         #Draws polygons on the image based on the DNA of the member
         for gene in _member.getDNA().getGenes():
             #Draws on the image
             drawingCanvas.polygon(xy=gene.getCoordsTuple(), fill=(gene.getColour().x, gene.getColour().y, gene.getColour().z, gene.getColour().w))#tuple(colour for colour in gene.getColour()))
+        del drawingCanvas
         #Returns the created image
         return memberImage
 
@@ -67,22 +68,24 @@ class GAPolygons(GeneticAlgorithm):
 if __name__=="__main__":
     inputFile = ""
     outputFile = ""
+    step = 10
     try:
         if sys.argv[1] == "-i": inputFile = sys.argv[2]
         if sys.argv[3] == "-o": outputFile = sys.argv[4]
+        if sys.argv[5] == "-s": step = int(sys.argv[6])
     except: sys.exit(0)
 
-    ga = GAPolygons(30, 512, 0.05, 0)
+    ga = GAPolygons(25, 768, 0.025, 0)
 
-    ga.setCanvasSize(Vector(100, 100))
-    ga.setFitnessThreshold(100 * 100 * 4 * 75)
+    ga.setCanvasSize(Vector(256, 256))
+    ga.setFitnessThreshold(256 * 256 * 4 * 75)
 
     targetImage = Image.open(inputFile)
     #Converts the image to RGBA
-    targetImage = targetImage.convert("RGBA")
-    targetImage = targetImage.resize((100, 100))
+    targetImage = targetImage.convert("RGB")
+    targetImage = targetImage.resize((256, 256))
 
     ga.setTargetImage(targetImage)
 
     ga.generatePopulation()
-    ga.run(outputFile, 10)
+    ga.run(outputFile, step)
