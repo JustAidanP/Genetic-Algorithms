@@ -41,9 +41,9 @@ if __name__=="__main__":
     except: sys.exit(0)
 
     #Creates the genetic algorithm
-    ga = GAPolygons(25, 768, 0.025, 0)
+    ga = GAPolygons(25, 512, 0.025, 0)
     #Sets the polygon ga specific data
-    ga.setCanvasSize(Vector(200, 200))
+    ga.setCanvasSize(Vector(256, 256))
     ga.setFitnessThreshold(256 * 256 * 4 * 75)
 
     #Opens the target image
@@ -57,9 +57,8 @@ if __name__=="__main__":
     ga.generatePopulation()
     # ga.run(generationCallback)
     avg = 0
-    for i in range(20):
+    for i in range(200):
         startTime = time.time()
         ga.runOnce()
         avg += time.time() - startTime
-    print("Default")
-    print(avg / 20)
+    print(avg / 200)

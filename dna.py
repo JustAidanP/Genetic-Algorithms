@@ -1,6 +1,6 @@
 from copy import deepcopy
 from random import randint
-import random
+import random, time
 from Gene import Gene
 #------Classes------
 #Holds all of the genes and handles creating a new set of DNA based on two old ones
@@ -21,7 +21,7 @@ class DNA:
     #Returns:   -The fused dna                  -DNA
     def fusion(self, otherDNA, mutationRate = 0):
         #Stores a new dna object
-        fusedDNA = deepcopy(DNA())
+        fusedDNA = DNA.new()
 
         #Starts adding one of the two dna objects genes to the fusedDNA
         for i in range(max(len(self.genes), len(otherDNA.genes))):
@@ -60,6 +60,11 @@ class DNA:
     def addGene(self, gene):
         # self.genes.append(deepcopy(gene))
         self.genes.append(gene.copy())
+
+    #Returns:   -A new dna  -DNA
+    @staticmethod
+    def new():
+        return DNA([])
 
     #Returns:   -The dump of the dna    -String
     def dump(self):

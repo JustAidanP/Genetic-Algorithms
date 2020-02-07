@@ -54,9 +54,9 @@ class GenePolygon(Gene.Gene):
     #Mutates the values of the gene
     def mutate(self):
         #Mutates the cooridnates by varying the coordiate's position
-        self.coords[0] += Vector(randint(-3, 3), randint(-3, 3))
-        self.coords[1] += Vector(randint(-3, 3), randint(-3, 3))
-        self.coords[2] += Vector(randint(-3, 3), randint(-3, 3))
+        self.coords[0] += Vector(randint(-6, 6), randint(-6, 6))
+        self.coords[1] += Vector(randint(-6, 6), randint(-6, 6))
+        self.coords[2] += Vector(randint(-6, 6), randint(-6, 6))
 
         #Makes sure that the points are within the canvas
         if self.coords[0].x > self.canvasSize.x: self.coords[1].x = 2 * self.canvasSize.x - self.coords[0].x
