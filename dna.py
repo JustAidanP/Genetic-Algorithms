@@ -39,6 +39,8 @@ class DNA:
                     fusedDNA.addGene(otherDNA.genes[i])
             #Mutates the gene if it falls within the mutation rate
             if random.uniform(0, 1) < mutationRate: fusedDNA.genes[i].mutate()
+            #Swaps the gene with the gene below if the there is another mutation
+
         #Returns the fused dna
         return fusedDNA
 

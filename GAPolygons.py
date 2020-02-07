@@ -40,7 +40,7 @@ class GAPolygons(GeneticAlgorithm):
     #Arguments: -The member -Member
     def createImage(self, _member):
         #Creates the image
-        memberImage = Image.new("RGB", (self.canvasSize.x, self.canvasSize.y), (0, 0, 0))
+        memberImage = Image.new("RGB", (self.canvasSize.x, self.canvasSize.y), (255, 255, 255))
         #Creates a canvas for the image
         drawingCanvas = ImageDraw.Draw(memberImage, "RGBA")
         #Draws polygons on the image based on the DNA of the member
@@ -63,29 +63,3 @@ class GAPolygons(GeneticAlgorithm):
         fitness = (10 / -self.fitnessThreshold) * totalDifference + 10
         #Assigns the fitness to the population member
         _member.fitness = fitness
-
-
-if __name__=="__main__":
-    inputFile = ""
-    outputFile = ""
-    step = 10
-    try:
-        if sys.argv[1] == "-i": inputFile = sys.argv[2]
-        if sys.argv[3] == "-o": outputFile = sys.argv[4]
-        if sys.argv[5] == "-s": step = int(sys.argv[6])
-    except: sys.exit(0)
-
-    ga = GAPolygons(25, 768, 0.025, 0)
-
-    ga.setCanvasSize(Vector(256, 256))
-    ga.setFitnessThreshold(256 * 256 * 4 * 75)
-
-    targetImage = Image.open(inputFile)
-    #Converts the image to RGBA
-    targetImage = targetImage.convert("RGB")
-    targetImage = targetImage.resize((256, 256))
-
-    ga.setTargetImage(targetImage)
-
-    ga.generatePopulation()
-    ga.run(outputFile, step)

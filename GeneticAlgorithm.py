@@ -61,35 +61,18 @@ class GeneticAlgorithm:
         #Performs natural selection
         self.performNaturalSelection()
 
-    #Runs the GA until either the defined number of generations have ran or until the time limit has ran out
-    #Arguments: The number of generations to run    -Int    -Default None
-    #           The time to run for                 -Float  -Default None
-    def runUntil(self): pass
     #Runs the GA forever, outputting the best member every so often
-    #Arguments: -The output path            -String
-    #           -Generations until output   -Int
-    def run(self, bmOutputPath, gensUntilOutput):
+    #Arguments: -The output path                    -String
+    #           -Generations until output           -Int
+    #           -The callback method to call on gen -Void(float TimeElapsed)
+    def run(self, callback):
         startTime = time.time()
         #Constantly runs the GA
         while True:
-            print("------Generation %s------"%self.generationNumber)
             self.runOnce()
-            #Checks to see if the best member should be output
-            if self.generationNumber % gensUntilOutput == 0:
-                print("Best Member Saved")
-                file = open(bmOutputPath + ".json", 'w')
-                #Creates the json file output
-                jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(self.bestMeber.dump(), time.time() - startTime, self.generationNumber)
-                file.write(jsonOut)
-                file.close()
-
-            #Writes a history of the best member when the generation is a power of two
-            if math.log2(self.generationNumber).is_integer():
-                file = open(bmOutputPath + "_Gen%s"%self.generationNumber + ".json", "w")
-                #Creates the json output file
-                jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(self.bestMeber.dump(), time.time() - startTime, self.generationNumber)
-                file.write(jsonOut)
-                file.close()
+            #Calls the callback if it exists
+            #Passes in the time elapsed
+            if callable(callback): callback(self, time.time() - startTime)
     
     #Stops the running of the GA
     def stop(self): pass
