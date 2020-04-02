@@ -38,8 +38,9 @@ class DNA:
                 else:
                     fusedDNA.addGene(otherDNA.genes[i])
             #Mutates the gene if it falls within the mutation rate
-            if random.uniform(0, 1) < mutationRate: fusedDNA.genes[i].mutate()
-            #Swaps the gene with the gene below if the there is another mutation
+            if random.uniform(0, 1) < mutationRate: 
+                fusedDNA.genes[i] = fusedDNA.genes[i].copy()
+                fusedDNA.genes[i].mutate()
 
         #Returns the fused dna
         return fusedDNA
@@ -59,7 +60,8 @@ class DNA:
     #Arguments: -The gene   -Gene
     def addGene(self, gene):
         # self.genes.append(deepcopy(gene))
-        self.genes.append(gene.copy())
+        # self.genes.append(gene.copy())
+        self.genes.append(gene)
 
     #Returns:   -A new dna  -DNA
     @staticmethod

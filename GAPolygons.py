@@ -1,6 +1,5 @@
 from PIL import Image, ImageDraw, ImageChops
-import numpy
-import sys
+import numpy, sys
 
 from copy import deepcopy
 from GenePolygon import GenePolygon
@@ -46,7 +45,7 @@ class GAPolygons(GeneticAlgorithm):
         #Draws polygons on the image based on the DNA of the member
         for gene in _member.getDNA().getGenes():
             #Draws on the image
-            drawingCanvas.polygon(xy=gene.getCoordsTuple(), fill=(gene.getColour().x, gene.getColour().y, gene.getColour().z, gene.getColour().w))#tuple(colour for colour in gene.getColour()))
+            drawingCanvas.polygon(xy=gene.getCoordsTuple(), fill=(gene.getColour().x, gene.getColour().y, gene.getColour().z, gene.getColour().w))
         del drawingCanvas
         #Returns the created image
         return memberImage
@@ -59,7 +58,5 @@ class GAPolygons(GeneticAlgorithm):
         imageDifference = ImageChops.difference(self.targetImage, memberImage)
         #Calculates the totalDifference between the two images
         totalDifference = abs(numpy.array(imageDifference).sum())
-        #Calculates the fitness based off of a linear function
-        fitness = (10 / -self.fitnessThreshold) * totalDifference + 10
         #Assigns the fitness to the population member
-        _member.fitness = fitness
+        _member.fitness = float(totalDifference)

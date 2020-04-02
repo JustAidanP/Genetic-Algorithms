@@ -19,11 +19,7 @@ class GenePolygon(Gene.Gene):
     def setCoords(self, _coords): self.coords = _coords
     def getCoords(self): return self.coords
     def getCoordsTuple(self):
-        coordsTuple = []
-        for xy in self.coords:
-            coordsTuple.append(xy.x)
-            coordsTuple.append(xy.y)
-        return tuple(coordsTuple)
+        return (self.coords[0].x, self.coords[0].y, self.coords[1].x, self.coords[1].y, self.coords[2].x, self.coords[2].y)
     #Arguments: -The colour of the polygon  -Vector4D
     def setColour(self, _colour): self.colour = _colour
     def getColour(self): return self.colour
@@ -35,8 +31,8 @@ class GenePolygon(Gene.Gene):
         self.coords[0] = Vector(randint(0, self.canvasSize.x), randint(0, self.canvasSize.y))
 
         #Randomises the next two points on the polygon, making sure that they are within 10 pixels (in either direction) of the base point
-        self.coords[1] = self.coords[0] + Vector(randint(-2, 2), randint(-2, 2))
-        self.coords[2] = self.coords[0] + Vector(randint(-2, 2), randint(-2, 2))
+        self.coords[1] = self.coords[0] + Vector(randint(-10, 10), randint(-10, 10))
+        self.coords[2] = self.coords[0] + Vector(randint(-10, 10), randint(-10, 10))
 
         #Makes sure that the points are within the canvas
         if self.coords[1].x > self.canvasSize.x: self.coords[1].x = 2 * self.canvasSize.x - self.coords[1].x
@@ -54,9 +50,9 @@ class GenePolygon(Gene.Gene):
     #Mutates the values of the gene
     def mutate(self):
         #Mutates the cooridnates by varying the coordiate's position
-        self.coords[0] += Vector(randint(-6, 6), randint(-6, 6))
-        self.coords[1] += Vector(randint(-6, 6), randint(-6, 6))
-        self.coords[2] += Vector(randint(-6, 6), randint(-6, 6))
+        self.coords[0] += Vector(randint(-3, 3), randint(-3, 3))
+        self.coords[1] += Vector(randint(-3, 3), randint(-3, 3))
+        self.coords[2] += Vector(randint(-3, 3), randint(-3, 3))
 
         #Makes sure that the points are within the canvas
         if self.coords[0].x > self.canvasSize.x: self.coords[1].x = 2 * self.canvasSize.x - self.coords[0].x

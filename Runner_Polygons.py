@@ -10,13 +10,13 @@ from GAPolygons import GAPolygons
 #Arguments: -The ga             -GeneticAlgorithm
 #           -The elapsedTime    -Float
 def generationCallback(ga, timeElapsed):
-    print("------Generation %s------"%ga.generationNumber)
+    print("------Generation %s, Time %s, Avg %s------"%(ga.generationNumber, round(timeElapsed, 3), round(timeElapsed / ga.generationNumber, 3)))
     #Checks to see if the best member should be output
     if ga.generationNumber % step == 0:
         print("Best Member Saved")
         file = open(outputFile + ".json", 'w')
         #Creates the json file output
-        jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(ga.bestMeber.dump(), timeElapsed, ga.generationNumber)
+        jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s, \"avgTime\":%s}"%(ga.bestMember.dump(), timeElapsed, ga.generationNumber, round(timeElapsed / ga.generationNumber, 3))
         file.write(jsonOut)
         file.close()
 
@@ -24,7 +24,7 @@ def generationCallback(ga, timeElapsed):
     if math.log2(ga.generationNumber).is_integer():
         file = open(outputFile + "_Gen%s"%ga.generationNumber + ".json", "w")
         #Creates the json output file
-        jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s}"%(ga.bestMeber.dump(), timeElapsed, ga.generationNumber)
+        jsonOut = "{\"member\":%s, \"time\":%s, \"generation\":%s, \"avgTime\":%s}"%(ga.bestMember.dump(), timeElapsed, ga.generationNumber, round(timeElapsed / ga.generationNumber, 3))
         file.write(jsonOut)
         file.close()
 
@@ -41,7 +41,7 @@ if __name__=="__main__":
     except: sys.exit(0)
 
     #Creates the genetic algorithm
-    ga = GAPolygons(25, 512, 0.025, 0)
+    ga = GAPolygons(25, 512, 0.025, 0, True)
     #Sets the polygon ga specific data
     ga.setCanvasSize(Vector(256, 256))
     ga.setFitnessThreshold(256 * 256 * 4 * 75)
@@ -55,10 +55,4 @@ if __name__=="__main__":
 
     #Runs the ga
     ga.generatePopulation()
-    # ga.run(generationCallback)
-    avg = 0
-    for i in range(200):
-        startTime = time.time()
-        ga.runOnce()
-        avg += time.time() - startTime
-    print(avg / 200)
+    ga.run(generationCallback)

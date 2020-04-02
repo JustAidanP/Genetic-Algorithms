@@ -7,7 +7,8 @@ class GeneticAlgorithm:
     #           -The gene count per DNA -Int
     #           -The gene mutation rate -Float
     #           -The gene addition rate -Float
-    def __init__(self, _populationSize, _geneCount, _mutationRate, _additionRate):
+    #           -Inverse fitness flag   -Bool
+    def __init__(self, _populationSize, _geneCount, _mutationRate, _additionRate, _inverseFitness=False):
         self.populationSize = _populationSize
         self.geneCount = _geneCount
         self.mutationRate = _mutationRate
@@ -17,8 +18,11 @@ class GeneticAlgorithm:
         #Stores the generation count
         self.generationNumber = 0
         #Creates the bestMember and mating pool containers
-        self.bestMeber = None
+        self.bestMember = None
         self.matingPool = []
+
+        #Determines whether the fitness is an inverse relationship (if the best fitness should be smaller than the worst)
+        self.inverseFitness = _inverseFitness
 
     #-------Procedures/Functions------
     def generatePopulation(self): pass
@@ -29,20 +33,39 @@ class GeneticAlgorithm:
     #Executes the generation
     def evaluateGeneration(self):
         #Stores the best member of the population
-        self.bestMeber = self.population.getMembers()[0]
+        self.bestMember = self.population.getMembers()[0]
         #Stores the mating pool for natural selection
         self.matingPool = []
+        #Stores the baseline and zero fitness levels, defaults them to the first member fitess
+        self.calculateFitness(self.population.members[0])
+        blFitness = self.population.members[0].getFitness() #A member with this fitness will get the most entrances
+        zFitness = self.population.members[0].getFitness()  #A member wit hthis fitness will get the least entrances
         #Loops through every member of the population and calculates the fitness for it
-        for member in self.population.getMembers():
-            self.calculateFitness(member)
-            #Adds a member to the mating list, ensuring that the final best member isn't contained, ensures that every member has at least one entry
-            if member.getFitness() > self.bestMeber.getFitness(): 
-                #Adds the last best member to the mating pool 
-                self.matingPool += [self.bestMeber for i in range(int(self.bestMeber.getFitness() // 1) ** 2 + 2 if self.bestMeber.getFitness() > 0 else 1)]
-                self.bestMeber = member
+        for i in range(1, len(self.population.getMembers())):
+            self.calculateFitness(self.population.members[i])
+            fitness = self.population.members[i].getFitness()
+            #Checks if it is the best or worst fitness
+            if self.inverseFitness:
+                if fitness < blFitness: 
+                    #Stores the member with the best fitness
+                    self.bestMember = self.population.members[i]
+                    blFitness = fitness
+                elif fitness > zFitness: zFitness = fitness
             else:
-                #Adds the member to the mating pool
-                self.matingPool += [member for i in range(int(member.getFitness() // 1) ** 2 + 2 if member.getFitness() > 0 else 1)]
+                if fitness > blFitness: 
+                    #Stores the member with the best fitness
+                    self.bestMember = self.population.members[i]
+                    blFitness = fitness
+                elif fitness < zFitness: zFitness = fitness
+        #Calculates the gradient for the entrance calculation, this gradient efectively normalises the fitness between the best and worst
+        gradient = 9/(blFitness - zFitness)
+        #Loops through every member, adding it to the matingPool based on its fitness compared to a linear scale between best and worst fitness
+        for member in self.population.getMembers():
+            #Exludes the best member
+            if blFitness == member.getFitness(): continue
+            #Performs the entrance calculation, E = gradient * (fitness - bsFitness)
+            entrance = (gradient * (member.getFitness() - blFitness) + 1) ** 2
+            self.matingPool += [member for i in range(int(entrance // 1))]
             
     #Performs natural selection on the generation
     def performNaturalSelection(self):
@@ -50,7 +73,7 @@ class GeneticAlgorithm:
         #Fills the population
         for i in range(self.populationSize):
             #Creates a new member, by fusing the best member with a random member from the mating pool
-            newMember = Member(self.bestMeber.getDNA().fusion(otherDNA=self.matingPool[randint(0, len(self.matingPool) - 1)].getDNA(), mutationRate=self.mutationRate))
+            newMember = Member(self.bestMember.getDNA().fusion(otherDNA=self.matingPool[randint(0, len(self.matingPool) - 1)].getDNA(), mutationRate=self.mutationRate))
             self.population.addMember(newMember)
 
     #Runs the GA once
